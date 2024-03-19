@@ -87,7 +87,10 @@ class HashMap
 
     def clear
         #removes all entries in the hash map
-
+        @buckets.each do |bucket|
+            bucket.clear # Remove all elements from the bucket
+        end
+        @size = 0
     end
 
     def keys
@@ -121,9 +124,7 @@ class HashMap
             end
         end
         entries
-
     end
-
 end
 
 #Extra Credit
@@ -200,4 +201,7 @@ puts "Hash size is #{mHash.length}."
 
 puts "All the keys: #{mHash.keys}"
 puts "All the values: #{mHash.values}"
+puts "Entries: #{mHash.entries}"
+
+mHash.clear
 puts "Entries: #{mHash.entries}"
