@@ -87,19 +87,41 @@ class HashMap
 
     def clear
         #removes all entries in the hash map
+
     end
 
     def keys
         #returns an array containing all the keys inside the hash map
-
+        keys = []
+        @buckets.each do |bucket|
+            bucket.each do |pair|
+                keys << pair[0]
+            end
+        end
+        keys
     end
 
     def values
         #returns an array containing all the values
+        values = []
+        @buckets.each do |bucket|
+            bucket.each do |pair|
+                values << pair[1]
+            end
+        end
+        values
     end
 
     def entries
         #returns an array that contains each key, value pair. Example: [[first_key, first_value], [second_key, second_value]]
+        entries = []
+        @buckets.each do |bucket|
+            bucket.each do |pair|
+                entries << [pair[0], pair[1]]
+            end
+        end
+        entries
+
     end
 
 end
@@ -151,6 +173,7 @@ class HashSet
 
     def entries
         #returns an array that contains each key, value pair. Example: [[first_key, first_value], [second_key, second_value]]
+
     end
 end
 
@@ -174,3 +197,7 @@ puts "Hash size is #{mHash.length}."
 
 puts "Removing #{mHash.remove('Ron')} from the hashmap."
 puts "Hash size is #{mHash.length}."
+
+puts "All the keys: #{mHash.keys}"
+puts "All the values: #{mHash.values}"
+puts "Entries: #{mHash.entries}"
