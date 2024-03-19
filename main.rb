@@ -1,6 +1,3 @@
-#Use the following snippet whenever you access a bucket through an index. We want to raise an error if we try to access an out of bound index:
-#raise IndexError if index.negative? || index >= @buckets.length
-
 class HashMap
     def initialize 
         @buckets = Array.new(10) { [] } # Initialize an array of empty buckets
@@ -13,16 +10,15 @@ class HashMap
         hash_code = 0
         prime_number = 31
         key.each_char { |char| hash_code = prime_number * hash_code + char.ord }
-        p hash_code
+        # p hash_code
         hash_code
     end
 
     def set(key,value)
         hash_code = hash(key)
         bucket_index = hash_code % @buckets.length # Determine the bucket index
-        p bucket_index
+        p "#{key} will be put in bucket index: #{bucket_index}"
 
-        raise IndexError if bucket_index.negative? || bucket_index >= @buckets.length
         bucket = @buckets[bucket_index]
         found_key_index = bucket.index { |pair| pair[0] == key }
 
@@ -35,7 +31,7 @@ class HashMap
             @size += 1 #Increment the number of elements
             resize_buckets if @size >= @threshold * @buckets.length #check if resizing is needed
         end
-        p @buckets
+        # p @buckets
     end
 
     def resize_buckets
@@ -45,7 +41,7 @@ class HashMap
             bucket.each do |pair|
                 new_hash_code = hash(pair[0])
                 new_bucket_index = new_hash_code % new_bucket_size
-                raise IndexError if new_bucket_index.negative? || new_bucket_index >= new_bucket_size
+                new_bucket_size
                 new_buckets[new_bucket_index] << pair
             end
         end
@@ -54,18 +50,39 @@ class HashMap
 
     def get(key)
         #returns the value that is assigned to this key. If key is not found, return nil.
+        hash_code = hash(key)
+        bucket_index = hash_code % @buckets.length
+        bucket = @buckets[bucket_index]
+        pair = bucket.find {|pair| pair[0] == key }
+        pair ? pair[1] : nil
     end
 
     def has(key)
         #returns true or false based on whether or not the key is in the hash map
+        hash_code = hash(key)
+        bucket_index = hash_code % @buckets.length
+        bucket = @buckets[bucket_index]
+        !!bucket.find { |pair| pair[0] == key } #.find returns the matching pair, use the !! to convert it to boolean value
     end
 
     def remove(key)
         #If the given key is in the hash map, it should remove the entry with that key and return the deleted entry’s value. If the key isn’t in the hash map, it should return nil.
+        hash_code = hash(key)
+        bucket_index = hash_code % @buckets.length
+        bucket = @buckets[bucket_index]
+        pair_index = bucket.index {|pair| pair[0] == key }
+        if pair_index
+            removed_pair = bucket.delete_at(pair_index)
+            @size -= 1
+            removed_pair #return the removed_pair key-value
+        else
+            nil
+        end
     end
 
     def length
         #returns the number of stored keys in the hash map
+        @size
     end
 
     def clear
@@ -74,6 +91,7 @@ class HashMap
 
     def keys
         #returns an array containing all the keys inside the hash map
+
     end
 
     def values
@@ -138,5 +156,21 @@ end
 
 #TESTING
 mHash = HashMap.new
-mHash.set('Hermione', 10)
-mHash.set('Ron', 5)
+mHash.set('Hermione', 'Gryffindor')
+mHash.set('Ron', 'Gryffindor')
+puts "Hash size is #{mHash.length}."
+
+puts "Getting Ron: #{mHash.get('Ron')}"
+puts "Getting Severus: #{mHash.get('Severus')}"
+
+mHash.set('Draco', 'Slytherin')
+puts "Hash size is #{mHash.length}."
+puts "Has Hermione?: #{mHash.has('Hermione')}"
+puts "Has Luna?: #{mHash.has('Luna')}"
+
+mHash.set('Luna', 'Ravenclaw')
+mHash.set('Cedric', 'Hufflepuff')
+puts "Hash size is #{mHash.length}."
+
+puts "Removing #{mHash.remove('Ron')} from the hashmap."
+puts "Hash size is #{mHash.length}."
